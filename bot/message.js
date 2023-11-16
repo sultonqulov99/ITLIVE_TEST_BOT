@@ -15,7 +15,7 @@ bot.on('message',async msg=>{
 
     const user = await User.findOne({chatId}).lean()
 
-    if(text == '/start'){
+    if(text == '/start'){ 
         subscribtion(msg)
         return
     }

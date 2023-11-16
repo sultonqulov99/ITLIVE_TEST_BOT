@@ -5,6 +5,7 @@ const Answer = new Schema({
         type: Date,
         default: Date.now,
     },
+    chatId:String,
     code_id:String,
     answer:String,
     startBot_time:String,

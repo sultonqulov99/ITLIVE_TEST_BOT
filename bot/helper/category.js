@@ -12,7 +12,7 @@ const resultUsers = async(msg) => {
     let list = await answers.map(answer =>
         [
             {
-                text:answer.code_id,
+                text:(answer.chatId == chatId || user[0].superAdmin) ? answer.code_id : "",
                 callback_data: `user_result_${answer._id}`
             }
         ]

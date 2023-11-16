@@ -31,6 +31,7 @@ const test = async(msg) => {
     }
 
     let newAnswer = new Answer({
+        chatId,
         code_id,
         answer,
         createdAt: new Date(),
