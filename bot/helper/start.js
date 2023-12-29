@@ -2,6 +2,9 @@ const { bot } = require('../bot')
 const User = require('../../model/user')
 const Answer = require('../../model/answer')
 const Result = require('../../model/result')
+const {Menu,certificatMenu} = require('../utils/menu')
+const {tumanCategorys} = require('../helper/category')
+
 
 const adminKeyboard = [
   [
@@ -40,15 +43,20 @@ const userKeyboard = [
 ]
 
 const start = async(msg) => {
+  try {
     const chatId = msg.from.id
     bot.sendMessage(chatId,`✍️ Ism-familiyangizni yozing`)
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 const requestFullName = async(msg) => {
+  try {
     let chatId = msg.from.id
     let text = msg.text 
 
-    if(text){
+    if(text && /^(?=.{3,50}$)[a-zA-Z ]+$/.test(text)){
         let user = await User.findOne({chatId}).lean()
         user.fullName = text
   
@@ -70,7 +78,7 @@ const requestFullName = async(msg) => {
         await newResult.save()
         }
 
-        bot.sendMessage(chatId,`${user.superAdmin ? "Menyuni tanlang SuperAdmin" : `📋${text.split(' ')[0]} menyudan tanlang` } `,{
+        bot.sendMessage(chatId,`${user.superAdmin ? "Menyuni tanlang SuperAdmin" : `📋${text.split(' ')[0]} telefon nomeringizni kiriting\nNamuna: '+998-- --- -- --' ` } `,{
           reply_markup:{
               keyboard: user.superAdmin ? adminKeyboard : userKeyboard,
               resize_keyboard: true
@@ -78,44 +86,37 @@ const requestFullName = async(msg) => {
           })
         await User.findByIdAndUpdate(user._id,user,{new: true})
     }
+    else {
+      bot.sendMessage(chatId," ❌ Bunday ism-familya kiritish mumkin emas\n\n🙏 Iltimos qaytadan kiriting")
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
 const requestContact = async(msg) => {
-  const chatId = msg.from.id
-
-    if(msg.contact.phone_number){
-        let user = await User.findOne({chatId}).lean()
-        user.phone = msg.contact.phone_number[0] == "+" ? msg.contact.phone_number :"+" + msg.contact.phone_number 
-        console.log(user.phone);
-        user.action = 'menu'
-
-        bot.sendMessage(chatId,`Menyuni tanlang`,{
-            reply_markup:{
-                keyboard: [
-                  [
-                    {
-                      text:"📋 Test javobini tekshirish"
-                    }
-                  ],
-                  [
-                    {
-                        text:"⬅️ Menyuga qaytish"
-                    }
-                ]
-              ],
-                resize_keyboard: true
-            }
-        })
-
-        await User.findByIdAndUpdate(user._id,user,{new: true})
-    }
+  try {
+    const chatId = msg.from.id
+    let user = await User.findOne({chatId}).lean()
+    let contact = msg.contact ? msg.contact.phone_number : null
+      if(contact || (/^998(9[012345789]|3[3]|7[1]|8[8])[0-9]{7}$/g).test(+msg.text)){
+          user.phone =(!contact) ? msg.text : (msg.contact.phone_number[0] == "+") ? msg.contact.phone_number :"+" + msg.contact.phone_number 
+          user.action = 'request_country'
+          tumanCategorys(chatId)
+          await User.findByIdAndUpdate(user._id,user,{new: true})
+      }
+      else {
+        bot.sendMessage(chatId," ❌ Bunday telefon nomer mavjud emas\n\n🙏 Iltimos qaytadan kiriting yoki menyudan foydalaning\n👇👇👇")
+      }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 const checkTest = async(msg) => {
+  try {
     let chatId = msg.from.id
     let text = msg.text
-
     let user = await User.findOne({chatId}).lean()
-
     if(text){
         let code_id = text.split('-')[0]
         let test_answer = text.split('-')[1]
@@ -151,13 +152,14 @@ const checkTest = async(msg) => {
             }
         const text1 = `🎊 Testda qatnashganingizdan minnatdormiz!\n\nSizning bu testdagi natijangiz:\n${str}\n\n✅ To'g'ri javoblar: ${result.data[result.data.length-1].correct} ta\n❌ Xato javoblar: ${result.data[result.data.length-1].incorrect} ta `;
         
-        await User.findByIdAndUpdate(user._id,{...user,action:"menu"},{new:true})
-        bot.sendMessage(chatId,text1)
+        await User.findByIdAndUpdate(user._id,{...user,action:"request_certificate"},{new:true})
+        await bot.sendMessage(chatId,text1)
+        certificatMenu(chatId)
 
         function compareAnswers(input, actual) {
             let correct = 0;
             let incorrect = 0;
-            let str = ""
+            let str = "" 
             let i = 1
             for (let index in actual) {
               if ((input[index] ? input[index].toLowerCase() : undefined) === (actual[index]? actual[index].toLowerCase() : undefined)) {
@@ -176,6 +178,9 @@ const checkTest = async(msg) => {
             };
           }
     }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 module.exports = {

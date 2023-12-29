@@ -2,6 +2,7 @@ const { bot } = require('./bot')
 const User = require('../model/user')
 
 const subscribtion = async (msg) =>{
+try {
     let chatId = msg.from.id
     let chackUser = await User.findOne({chatId}).lean()
 
@@ -36,7 +37,9 @@ const subscribtion = async (msg) =>{
             ]
         }
     })
-}
+} catch (error) {
+    console.log(error);
+}}
 
 const checkUser = async (chatId,userId) => {
     let user = await User.findOne({chatId}).lean()
