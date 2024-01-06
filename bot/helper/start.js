@@ -45,7 +45,7 @@ const userKeyboard = [
 const start = async(msg) => {
   try {
     const chatId = msg.from.id
-    bot.sendMessage(chatId,`✍️ Ism-familiyangizni yozing`)
+    bot.sendMessage(chatId,`✍️ Ismingizni kiriting`)
   } catch (error) {
     console.log(error);
   }
@@ -58,10 +58,38 @@ const requestFullName = async(msg) => {
 
     if(text && /^(?=.{3,50}$)[a-zA-Z ]+$/.test(text)){
         let user = await User.findOne({chatId}).lean()
-        user.fullName = text
+        user.surnameName = text
+        user.action = 'request_lastname'
+        
+
+        if(!user.superAdmin){
+          let newResult = new Result({
+            user:user._id,
+            createdAt: new Date(),
+        })
+        await newResult.save()
+        }
+
+        bot.sendMessage(chatId,`${text} familyangizni kiriting`)
+        await User.findByIdAndUpdate(user._id,user,{new: true})
+    }
+    else {
+      bot.sendMessage(chatId," ❌ Bunday ism kiritish mumkin emas\n\n🙏 Iltimos qaytadan kiriting")
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const requestSurname = async(msg) => {
+  try {
+    let chatId = msg.from.id
+    let text = msg.text 
+
+    if(text && /^(?=.{3,50}$)[a-zA-Z ]+$/.test(text)){
+        let user = await User.findOne({chatId}).lean()
+        user.lastName = text
   
-        let adminIsm = text.split(' ')[0]
-        let adminFam = text.split(' ')[1]
         if(chatId == 899036228 || chatId == 5279091476 ){
           user.superAdmin = true
           user.action = 'menu'
@@ -78,7 +106,7 @@ const requestFullName = async(msg) => {
         await newResult.save()
         }
 
-        bot.sendMessage(chatId,`${user.superAdmin ? "Menyuni tanlang SuperAdmin" : `📋${text.split(' ')[0]} telefon nomeringizni kiriting\nNamuna: '+998-- --- -- --' ` } `,{
+        bot.sendMessage(chatId,`${user.superAdmin ? "Menyuni tanlang SuperAdmin" : `${user.surname} telefon nomeringizni kiriting\nNamuna: '+998-- --- -- --' ` } `,{
           reply_markup:{
               keyboard: user.superAdmin ? adminKeyboard : userKeyboard,
               resize_keyboard: true
@@ -87,12 +115,15 @@ const requestFullName = async(msg) => {
         await User.findByIdAndUpdate(user._id,user,{new: true})
     }
     else {
-      bot.sendMessage(chatId," ❌ Bunday ism-familya kiritish mumkin emas\n\n🙏 Iltimos qaytadan kiriting")
+      bot.sendMessage(chatId," ❌ Bunday familya kiritish mumkin emas\n\n🙏 Iltimos qaytadan kiriting")
     }
   } catch (error) {
     console.log(error);
   }
 }
+
+
+
 const requestContact = async(msg) => {
   try {
     const chatId = msg.from.id
@@ -186,6 +217,7 @@ const checkTest = async(msg) => {
 module.exports = {
     start,
     requestFullName,
+    requestSurname,
     checkTest,
     requestContact
 }

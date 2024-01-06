@@ -6,7 +6,7 @@ async function userInfo(msg){
         let chatId = msg.from.id
         let user = await User.findOne({chatId}).lean()
         const timestamp = getCurrentTimeStamp();
-        const text = `<b>Sizning ma'lumotlaringiz</b>\nRol: <i>O'quvchi</i>\n\n👤 Ism, Familiya: <i>${user.fullName}</i>\n🏘 Tuman: <i>${user.country}</i>\n🏫 Maktab: <i>${user.school}</i>\n🈴 Sinf: <i>${user.class}</i>\n\nMa'lumot aktualligi: <code>${timestamp}</code>`;
+        const text = `<b>Sizning ma'lumotlaringiz</b>\nRol: <i>O'quvchi</i>\n\n👤 Ism: <i>${user.surname}</i>\n🏘 Tuman: <i>${user.country}</i>\n🏫 Maktab: <i>${user.school}</i>\n🈴 Sinf: <i>${user.class}</i>\n\nMa'lumot aktualligi: <code>${timestamp}</code>`;
 
         bot.sendMessage(chatId,text,{parse_mode: 'HTML'})
     } catch (error) {

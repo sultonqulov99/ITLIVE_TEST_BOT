@@ -1,7 +1,8 @@
 const {Schema,model} = require('mongoose')
 
 const User = new Schema({
-    fullName:String,
+    surName:String,
+    lastName:String,
     chatId: Number,
     phone:String,
     country:String,

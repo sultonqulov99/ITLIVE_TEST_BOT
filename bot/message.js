@@ -1,6 +1,6 @@
 const { bot } = require('./bot')
 const path = require("path")
-const { start, requestFullName, checkTest, requestContact } = require('./helper/start')
+const { start, requestFullName,requestSurname, checkTest, requestContact } = require('./helper/start')
 const { add_admin, admin} = require('./helper/keyboard')
 const { add_test,test,testAnswer} = require('./helper/test')
 const { userAdmin,allUser,goBack} = require('./helper/user')
@@ -28,10 +28,18 @@ try {
         }
         else if(user.action == "request_fullName"){
             if(text == '/start'){
-                bot.sendMessage(chatId,"✍️ Ism-familiyangizni kiriting")
+                bot.sendMessage(chatId,"✍️ Ismingizni kiriting")
             }
             else{
                 requestFullName(msg)
+            }
+        }
+        else if(user.action == "request_lastname"){
+            if(text == '/start'){
+                bot.sendMessage(chatId,"✍️ Familiyangizni kiriting")
+            }
+            else{
+                requestSurname(msg)
             }
         }
         else if(user.action === 'request_contact'){
