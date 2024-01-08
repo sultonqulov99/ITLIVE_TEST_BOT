@@ -48,9 +48,9 @@ const checkUser = async (chatId,userId) => {
         .then(async (result) => {
           if (result.status === 'member' || result.status === 'administrator') {
             
-            bot.sendMessage(chatId,`✍️ Ism-familiyangizni yozing`)
+            bot.sendMessage(chatId,`✍️ Ismingizni kiriting`)
     
-            await User.findByIdAndUpdate(user._id,{...user,action:"request_fullName"},{new:true})
+            await User.findByIdAndUpdate(user._id,{...user,action:"request_surName"},{new:true})
           } else {
             bot.sendMessage(chatId, `Siz @It_Live_Guliston kanalga a'zo bo\'lmagansiz, iltimos, avval kanalga a'zo bo\'ling: `);
           }

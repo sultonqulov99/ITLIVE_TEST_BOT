@@ -58,7 +58,7 @@ const requestFullName = async(msg) => {
 
     if(text && /^(?=.{3,50}$)[a-zA-Z ]+$/.test(text)){
         let user = await User.findOne({chatId}).lean()
-        user.surnameName = text
+        user.surName = text
         user.action = 'request_lastname'
         
 
@@ -70,7 +70,7 @@ const requestFullName = async(msg) => {
         await newResult.save()
         }
 
-        bot.sendMessage(chatId,`${text} familyangizni kiriting`)
+        bot.sendMessage(chatId,`✍️ ${user.surName} familyangizni kiriting`)
         await User.findByIdAndUpdate(user._id,user,{new: true})
     }
     else {
@@ -106,7 +106,7 @@ const requestSurname = async(msg) => {
         await newResult.save()
         }
 
-        bot.sendMessage(chatId,`${user.superAdmin ? "Menyuni tanlang SuperAdmin" : `${user.surname} telefon nomeringizni kiriting\nNamuna: '+998-- --- -- --' ` } `,{
+        bot.sendMessage(chatId,`${user.superAdmin ? "Menyuni tanlang SuperAdmin" : `${user.surName} telefon nomeringizni kiriting\nNamuna: '+998-- --- -- --' ` } `,{
           reply_markup:{
               keyboard: user.superAdmin ? adminKeyboard : userKeyboard,
               resize_keyboard: true

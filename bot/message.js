@@ -26,7 +26,7 @@ try {
         if(user.action == "check_chanel"){
             checkUser()
         }
-        else if(user.action == "request_fullName"){
+        else if(user.action == "request_surName"){
             if(text == '/start'){
                 bot.sendMessage(chatId,"✍️ Ismingizni kiriting")
             }
