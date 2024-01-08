@@ -120,7 +120,7 @@ try {
             time(msg)
         }
         else if(user.admin){
-            userAdmin(msg)
+            userAdmin(msg)  
         }
         else if(text == "🎗 Sertifikat olish" && user.action == "request_certificate"){
             let res = await addTextToExistingImage(msg);
